@@ -144,14 +144,11 @@ class TestTimerSettings:
     """Tests for TimerSettings model"""
 
     def test_create_timer_settings(self):
-        """Test creating timer settings"""
+        """Test creating timer settings (auto-created by signal)"""
         user = User.objects.create_user(username='testuser', password='testpass')
-        settings = TimerSettings.objects.create(
-            user=user,
-            work_duration=25,
-            short_break_duration=5,
-            long_break_duration=15
-        )
+
+        # Settings should be auto-created by signal
+        settings = TimerSettings.objects.get(user=user)
 
         assert settings.user == user
         assert settings.work_duration == 25
@@ -162,7 +159,9 @@ class TestTimerSettings:
     def test_default_settings(self):
         """Test that default settings are applied"""
         user = User.objects.create_user(username='testuser', password='testpass')
-        settings = TimerSettings.objects.create(user=user)
+
+        # Settings auto-created by signal
+        settings = TimerSettings.objects.get(user=user)
 
         assert settings.work_duration == 25
         assert settings.short_break_duration == 5
@@ -172,7 +171,9 @@ class TestTimerSettings:
     def test_one_settings_per_user(self):
         """Test that each user has only one settings object"""
         user = User.objects.create_user(username='testuser', password='testpass')
-        settings1 = TimerSettings.objects.create(user=user)
+
+        # Settings auto-created by signal
+        settings1 = TimerSettings.objects.get(user=user)
 
         # Trying to create another should fail with unique constraint
         with pytest.raises(Exception):  # IntegrityError
@@ -181,7 +182,9 @@ class TestTimerSettings:
     def test_str_representation(self):
         """Test string representation of settings"""
         user = User.objects.create_user(username='testuser', password='testpass')
-        settings = TimerSettings.objects.create(user=user)
+
+        # Settings auto-created by signal
+        settings = TimerSettings.objects.get(user=user)
 
         expected = f"Settings for testuser"
         assert str(settings) == expected
@@ -189,9 +192,10 @@ class TestTimerSettings:
     def test_get_work_duration_seconds(self):
         """Test getting work duration in seconds"""
         user = User.objects.create_user(username='testuser', password='testpass')
-        settings = TimerSettings.objects.create(
-            user=user,
-            work_duration=25
-        )
+
+        # Settings auto-created by signal, modify them
+        settings = TimerSettings.objects.get(user=user)
+        settings.work_duration = 25
+        settings.save()
 
         assert settings.get_work_duration_seconds() == 1500

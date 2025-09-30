@@ -97,11 +97,72 @@ INSTALLED_APPS = [
 
 # Include URLs
 urlpatterns = [
+    path('accounts/', include('django.contrib.auth.urls')),  # Login/logout URLs
     path('timer/', include('task_timer.urls')),
 ]
 
+# Configure authentication settings
+LOGIN_REDIRECT_URL = '/timer/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
+
 # Run migrations
 python manage.py migrate
+```
+
+## 🔐 Authentication
+
+Django Task Timer includes built-in authentication with a pre-styled login page.
+
+### Included Features
+- **Login page** at `/accounts/login/` with custom styling
+- **Automatic logout** URL at `/accounts/logout/`
+- **Password reset** URLs (optional, requires email configuration)
+- **User registration** (optional, you can add your own registration view)
+
+### Quick Setup
+
+The app includes all necessary templates in `task_timer/templates/registration/login.html`. Just add the auth URLs to your project:
+
+```python
+# urls.py
+urlpatterns = [
+    path('accounts/', include('django.contrib.auth.urls')),  # Add this line
+    path('timer/', include('task_timer.urls')),
+]
+```
+
+### Auto-Created User Settings
+
+When a new user is created (via admin, shell, or registration), a `TimerSettings` object is automatically created with sensible defaults:
+- Work duration: 25 minutes
+- Short break: 5 minutes
+- Long break: 15 minutes
+- Auto-start breaks: False
+
+Users can customize these settings through the timer interface or Django admin.
+
+### Custom Authentication
+
+You can customize the authentication:
+
+1. **Use your own login template:** Create `templates/registration/login.html` in your project to override the included template
+
+2. **Add registration:** Create your own registration view and URL
+
+3. **Use third-party auth:** Integrate with `django-allauth` or other authentication packages
+
+### Creating Test Users
+
+```bash
+# Via Django shell
+python manage.py shell
+>>> from django.contrib.auth.models import User
+>>> user = User.objects.create_user('testuser', 'test@example.com', 'password123')
+>>> # TimerSettings automatically created via signal!
+
+# Via admin
+python manage.py createsuperuser
+# Then create regular users via admin interface at /admin/
 ```
 
 ## 📚 Documentation
