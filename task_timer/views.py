@@ -174,3 +174,48 @@ class SettingsViewSet(viewsets.ViewSet):
             return Response(serializer.data)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# Frontend views
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
+
+
+@login_required
+def dashboard_view(request):
+    """Dashboard with timer interface"""
+    return render(request, 'task_timer/dashboard.html')
+
+
+@login_required
+def history_view(request):
+    """Session history page"""
+    sessions = TimerSession.objects.filter(created_by=request.user)
+    paginator = Paginator(sessions, 20)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, 'task_timer/history.html', {
+        'sessions': page_obj
+    })
+
+
+@login_required
+def settings_view(request):
+    """User settings page"""
+    engine = TimerEngine(user=request.user)
+    settings = engine.get_or_create_settings()
+
+    if request.method == 'POST':
+        settings.work_duration = int(request.POST.get('work_duration', 25))
+        settings.short_break_duration = int(request.POST.get('short_break_duration', 5))
+        settings.long_break_duration = int(request.POST.get('long_break_duration', 15))
+        settings.auto_start_breaks = 'auto_start_breaks' in request.POST
+        settings.save()
+        return redirect('task_timer:settings-view')
+
+    return render(request, 'task_timer/settings.html', {
+        'settings': settings
+    })

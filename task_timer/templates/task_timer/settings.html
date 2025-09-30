@@ -1,0 +1,46 @@
+{% extends 'task_timer/base.html' %}
+
+{% block title %}Settings - Task Timer{% endblock %}
+
+{% block content %}
+<div class="settings-page">
+    <h1>Timer Settings</h1>
+
+    <form method="post" class="settings-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="work_duration">Work Duration (minutes)</label>
+            <input type="number" id="work_duration" name="work_duration"
+                   value="{{ settings.work_duration }}" min="1" max="120" required>
+            <p class="help-text">Default: 25 minutes (one Pomodoro)</p>
+        </div>
+
+        <div class="form-group">
+            <label for="short_break_duration">Short Break (minutes)</label>
+            <input type="number" id="short_break_duration" name="short_break_duration"
+                   value="{{ settings.short_break_duration }}" min="1" max="30" required>
+            <p class="help-text">Default: 5 minutes</p>
+        </div>
+
+        <div class="form-group">
+            <label for="long_break_duration">Long Break (minutes)</label>
+            <input type="number" id="long_break_duration" name="long_break_duration"
+                   value="{{ settings.long_break_duration }}" min="1" max="60" required>
+            <p class="help-text">Default: 15 minutes (after 4 Pomodoros)</p>
+        </div>
+
+        <div class="form-group">
+            <label>
+                <input type="checkbox" name="auto_start_breaks"
+                       {% if settings.auto_start_breaks %}checked{% endif %}>
+                Auto-start breaks
+            </label>
+            <p class="help-text">Automatically start break timer after work session</p>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save Settings</button>
+        <a href="{% url 'task_timer:dashboard' %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}

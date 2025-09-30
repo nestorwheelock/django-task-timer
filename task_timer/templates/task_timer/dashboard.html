@@ -1,0 +1,71 @@
+{% extends 'task_timer/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - Task Timer{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="timer-section">
+        <div class="timer-display">
+            <div id="timer" class="timer">25:00</div>
+            <div id="timer-status" class="timer-status">Ready to start</div>
+        </div>
+
+        <div class="timer-controls">
+            <button id="start-btn" class="btn btn-primary">Start</button>
+            <button id="pause-btn" class="btn btn-warning" style="display:none;">Pause</button>
+            <button id="resume-btn" class="btn btn-success" style="display:none;">Resume</button>
+            <button id="stop-btn" class="btn btn-danger" style="display:none;">Stop</button>
+        </div>
+
+        <div id="task-form" class="task-form">
+            <label for="task-input">What are you working on?</label>
+            <input type="text" id="task-input" placeholder="Enter task description" required>
+
+            <label for="notes-input">Notes (optional)</label>
+            <textarea id="notes-input" rows="3" placeholder="Add notes about this task"></textarea>
+
+            <button id="start-session-btn" class="btn btn-primary">Start Pomodoro</button>
+            <button id="cancel-btn" class="btn btn-secondary">Cancel</button>
+        </div>
+    </div>
+
+    <div class="stats-section">
+        <h2>Today's Progress</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="today-sessions">0</div>
+                <div class="stat-label">Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="today-completed">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="today-minutes">0m</div>
+                <div class="stat-label">Time Worked</div>
+            </div>
+        </div>
+
+        <h2>This Week</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="week-sessions">0</div>
+                <div class="stat-label">Sessions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="week-completed">0</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="week-minutes">0m</div>
+                <div class="stat-label">Time Worked</div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'task_timer/js/timer.js' %}"></script>
+{% endblock %}

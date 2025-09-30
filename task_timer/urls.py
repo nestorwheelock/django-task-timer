@@ -24,7 +24,15 @@ router.register(r'sessions', SessionViewSet, basename='session')
 # Apply pagination to SessionViewSet
 SessionViewSet.pagination_class = StandardResultsSetPagination
 
+from task_timer import views
+
 urlpatterns = [
+    # Frontend views
+    path('', views.dashboard_view, name='dashboard'),
+    path('history/', views.history_view, name='history'),
+    path('settings/', views.settings_view, name='settings-view'),
+
+    # API endpoints
     path('api/', include(router.urls)),
     path('api/settings/', SettingsViewSet.as_view({'get': 'retrieve', 'put': 'update'}), name='settings-detail'),
 ]

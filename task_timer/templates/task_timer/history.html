@@ -1,0 +1,46 @@
+{% extends 'task_timer/base.html' %}
+
+{% block title %}History - Task Timer{% endblock %}
+
+{% block content %}
+<div class="history-page">
+    <h1>Session History</h1>
+
+    <div class="sessions-list">
+        {% for session in sessions %}
+        <div class="session-card status-{{ session.status }}">
+            <div class="session-header">
+                <h3>{{ session.task }}</h3>
+                <span class="status-badge status-{{ session.status }}">{{ session.status }}</span>
+            </div>
+            <div class="session-details">
+                <p><strong>Started:</strong> {{ session.start_time|date:"M d, Y H:i" }}</p>
+                {% if session.end_time %}
+                <p><strong>Ended:</strong> {{ session.end_time|date:"M d, Y H:i" }}</p>
+                {% endif %}
+                <p><strong>Duration:</strong> {{ session.get_duration_formatted }}</p>
+                {% if session.notes %}
+                <p><strong>Notes:</strong> {{ session.notes }}</p>
+                {% endif %}
+            </div>
+        </div>
+        {% empty %}
+        <p class="empty-state">No sessions yet. Start your first Pomodoro!</p>
+        {% endfor %}
+    </div>
+
+    {% if sessions.has_other_pages %}
+    <div class="pagination">
+        {% if sessions.has_previous %}
+        <a href="?page={{ sessions.previous_page_number }}" class="btn">Previous</a>
+        {% endif %}
+
+        <span class="page-info">Page {{ sessions.number }} of {{ sessions.paginator.num_pages }}</span>
+
+        {% if sessions.has_next %}
+        <a href="?page={{ sessions.next_page_number }}" class="btn">Next</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
